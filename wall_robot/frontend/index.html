@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autonomous Wall-Finishing Robot</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>Autonomous Wall-Finishing Robot</h1>
+        </header>
+        
+        <div class="main-content">
+            <div class="control-panel">
+                <div class="control-section">
+                    <h2>Wall Configuration</h2>
+                    <div class="form-group">
+                        <label for="wall-width">Wall Width (m):</label>
+                        <input type="number" id="wall-width" min="0.1" step="0.1" value="5.0">
+                    </div>
+                    <div class="form-group">
+                        <label for="wall-height">Wall Height (m):</label>
+                        <input type="number" id="wall-height" min="0.1" step="0.1" value="5.0">
+                    </div>
+                    <button id="create-wall" class="btn btn-primary">Create Wall</button>
+                </div>
+                
+                <div class="control-section">
+                    <h2>Robot Configuration</h2>
+                    <div class="form-group">
+                        <label for="robot-width">Robot Width (m):</label>
+                        <input type="number" id="robot-width" min="0.05" step="0.01" value="0.2">
+                    </div>
+                    <div class="form-group">
+                        <label for="overlap">Overlap (%):</label>
+                        <input type="number" id="overlap" min="0" max="50" value="10">
+                    </div>
+                </div>
+                
+                <div class="control-section">
+                    <h2>Obstacles</h2>
+                    <div class="form-group">
+                        <label for="obstacle-type">Type:</label>
+                        <select id="obstacle-type">
+                            <option value="window">Window</option>
+                            <option value="door">Door</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="obstacle-width">Width (m):</label>
+                        <input type="number" id="obstacle-width" min="0.1" step="0.1" value="0.25">
+                    </div>
+                    <div class="form-group">
+                        <label for="obstacle-height">Height (m):</label>
+                        <input type="number" id="obstacle-height" min="0.1" step="0.1" value="0.25">
+                    </div>
+                    <div class="button-group">
+                        <button id="add-obstacle" class="btn btn-secondary">Add Obstacle</button>
+                        <button id="clear-obstacles" class="btn btn-warning">Clear All</button>
+                    </div>
+                </div>
+                
+                <div class="control-section">
+                    <h2>Trajectory</h2>
+                    <div class="form-group">
+                        <label for="trajectory-name">Name:</label>
+                        <input type="text" id="trajectory-name" value="Coverage Path">
+                    </div>
+                    <button id="plan-trajectory" class="btn btn-primary">Plan Trajectory</button>
+                    <button id="clear-trajectory" class="btn btn-warning">Clear Trajectory</button>
+                    
+                    <div class="trajectory-controls" style="margin-top: 15px;">
+                        <button id="play-trajectory" class="btn btn-success" disabled>Play</button>
+                        <button id="pause-trajectory" class="btn btn-warning" disabled>Pause</button>
+                        <button id="stop-trajectory" class="btn btn-danger" disabled>Stop</button>
+                    </div>
+                    
+                    <div class="trajectory-info" style="margin-top: 15px;">
+                        <p>Distance: <span id="trajectory-distance">0.00</span> m</p>
+                        <p>Points: <span id="trajectory-points">0</span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="visualization-panel">
+                <div class="canvas-container">
+                    <canvas id="wall-canvas"></canvas>
+                    <div id="status-message" class="status-message"></div>
+                </div>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #4CAF50;"></div>
+                        <span>Wall</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #FF9800;"></div>
+                        <span>Obstacles</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #2196F3;"></div>
+                        <span>Trajectory</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #F44336;"></div>
+                        <span>Robot</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/app.js" type="module"></script>
+</body>
+</html>
