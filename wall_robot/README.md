@@ -8,13 +8,13 @@ A web-based application for planning and visualizing coverage paths for an auton
 - Obstacle placement (windows, doors, etc.)
 - Boustrophedon coverage path planning
 - Real-time visualization of the robot's path
-- Trajectory playback with play/pause/stop controls
+- Trajectory playback with play/pause/stop controls (robot animates directly on the canvas)
 - Responsive design that works on desktop and tablet devices
+- Full backend/frontend integration (data is persisted and all actions use the API)
 
 ## Prerequisites
 
 - Python 3.8+
-- Node.js 14+ (for frontend development)
 - pip (Python package manager)
 
 ## Installation
@@ -29,7 +29,7 @@ A web-based application for planning and visualizing coverage paths for an auton
    ```bash
    # On Windows
    python -m venv venv
-   .\\venv\\Scripts\\activate
+   .\venv\Scripts\activate
    
    # On macOS/Linux
    python3 -m venv venv
@@ -43,10 +43,9 @@ A web-based application for planning and visualizing coverage paths for an auton
 
 ## Running the Application
 
-1. Start the FastAPI backend:
+1. Start the FastAPI backend (serves both API and frontend):
    ```bash
-   cd app
-   uvicorn main:app --reload
+   uvicorn app.main:app --reload
    ```
 
 2. The application will be available at:
@@ -54,13 +53,8 @@ A web-based application for planning and visualizing coverage paths for an auton
    http://127.0.0.1:8000
    ```
 
-3. For development with live reloading of frontend changes, you can use a simple HTTP server:
-   ```bash
-   # From the project root
-   cd frontend
-   python -m http.server 8001
-   ```
-   Then open `http://localhost:8001` in your browser.
+- The frontend is served from `/static/` (e.g., `/static/js/app.js`).
+- All static files must be present in `frontend/static/`.
 
 ## Project Structure
 
@@ -89,18 +83,18 @@ wall_robot/
 │   │   └── coverage_planner.py
 │   └── main.py                   # FastAPI application entry point
 ├── frontend/                     # Frontend application
-│   ├── css/
-│   │   └── styles.css
-│   ├── js/
-│   │   ├── app.js
-│   │   ├── api-client.js
-│   │   ├── trajectory-player.js
-│   │   └── wall-visualizer.js
-│   ├── index.html
-│   └── static/                   # Static assets
+│   ├── static/
+│   │   ├── styles.css
+│   │   └── js/
+│   │       ├── app.js
+│   │       ├── api-client.js
+│   │       ├── trajectory-player.js
+│   │       └── wall-visualizer.js
+│   └── index.html
 ├── tests/                        # Test files
 │   └── __init__.py
 ├── requirements.txt              # Python dependencies
+├── .gitignore                    # Git ignore rules
 └── README.md                     # This file
 ```
 
@@ -129,6 +123,27 @@ Once the application is running, you can access the interactive API documentatio
    - Use the playback controls to visualize the robot's movement
    - Toggle between play, pause, and stop
 
+## Troubleshooting
+
+- **Play button is disabled:**
+  - Make sure you have planned a trajectory (the trajectory must not be empty).
+  - Check the browser console for errors or empty trajectory logs.
+  - Ensure the backend is running and accessible at `http://127.0.0.1:8000`.
+
+- **Static files (JS/CSS) not loading:**
+  - Make sure all JS files are present in `frontend/static/js/`.
+  - Restart the FastAPI server if you add or update static files.
+  - Hard refresh your browser (Ctrl+Shift+R).
+
+- **Trajectory is empty:**
+  - Check your wall and robot dimensions. The robot must fit inside the wall.
+  - Remove obstacles and try again.
+  - See the browser console for the coverage request and backend response.
+
+- **Other issues:**
+  - Check the `.gitignore` file to ensure you are not committing unnecessary files.
+  - See the logs in `app.log` for backend errors.
+
 ## Testing
 
 To run the tests:
@@ -141,6 +156,13 @@ pytest
 pytest --cov=app tests/
 ```
 
+## Contributing
+
+Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+
+- Please make sure to update tests as appropriate.
+- Follow the existing code style and structure.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -148,6 +170,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Acknowledgments
 
 - FastAPI for the awesome web framework
-- SQLAlchemy for ORM
 - Canvas API for 2D rendering
 - Boustrophedon decomposition algorithm for coverage planning
