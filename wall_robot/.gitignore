@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.egg-info/
+.env
+.venv/
+venv/
+ENV/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Node/JS
+node_modules/
+frontend/static/js/*.map
+
+# Frontend build artifacts
+frontend/static/js/*.js
+!frontend/static/js/app.js
+!frontend/static/js/trajectory-player.js
+!frontend/static/js/api-client.js
+!frontend/static/js/wall-visualizer.js
+frontend/static/styles.css
+
+# Ignore data
+/data/
+
+# Ignore test output
+*.coverage
+htmlcov/
+
+# Ignore editor configs
+.vscode/
+.idea/ 

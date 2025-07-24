@@ -1,11 +1,17 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pathlib import Path
 import logging
 from datetime import datetime
+import sys
 
-# Configure logging
+# Fix: Add root path for absolute module import
+BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(BASE_DIR))
+
+# Logging setup
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -16,59 +22,39 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Create FastAPI app
+# Create FastAPI instance
 app = FastAPI(
     title="Autonomous Wall-Finishing Robot API",
-    description="API for controlling and monitoring an autonomous wall-finishing robot",
-    version="0.1.0"
+    description="API to control and visualize autonomous wall painting robot",
+    version="1.0.0"
 )
 
-# Enable CORS
+# Enable CORS for local dev
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # Allow frontend from any origin
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Mount static files for frontend
-frontend_path = Path(__file__).parent.parent / "frontend"
+# Serve frontend static files
+frontend_path = BASE_DIR / "frontend"
 app.mount("/static", StaticFiles(directory=frontend_path / "static"), name="static")
 
-# Middleware for request logging
-@app.middleware("http")
-async def log_requests(request, call_next):
-    start_time = datetime.now()
-    
-    # Process the request
-    response = await call_next(request)
-    
-    # Calculate processing time
-    process_time = (datetime.now() - start_time).total_seconds()
-    
-    # Log request details
-    logger.info(
-        f"Request: {request.method} {request.url.path} - "
-        f"Status: {response.status_code} - "
-        f"Process Time: {process_time:.4f}s"
-    )
-    
-    # Add header with process time
-    response.headers["X-Process-Time"] = str(process_time)
-    return response
+# Root route to serve index.html
+@app.get("/", response_class=FileResponse)
+async def get_index():
+    return frontend_path / "index.html"
 
-# Health check endpoint
+# Health check route
 @app.get("/api/health")
-async def health_check():
+def health_check():
     return {"status": "healthy", "timestamp": datetime.now().isoformat()}
 
-# Import and include routers
-from app.api import trajectories, obstacles
-app.include_router(trajectories.router, prefix="/api/trajectories", tags=["trajectories"])
-app.include_router(obstacles.router, prefix="/api/obstacles", tags=["obstacles"])
+# Import and mount API routers
+from app.api import walls, obstacles, trajectories
 
-# Root endpoint to serve frontend
-@app.get("/")
-async def read_root():
-    return {"message": "Autonomous Wall-Finishing Robot API is running"}
+app.include_router(walls.router, prefix="/api/walls", tags=["walls"])
+app.include_router(obstacles.router, prefix="/api/obstacles", tags=["obstacles"])
+app.include_router(trajectories.router, prefix="/api/trajectories", tags=["trajectories"])
